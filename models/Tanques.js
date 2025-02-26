@@ -1,3 +1,4 @@
+const { type } = require('express/lib/response');
 const {Schema, model} = require('mongoose');
 
 const TanqueSchema = Schema({
