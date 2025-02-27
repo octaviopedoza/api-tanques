@@ -37,6 +37,9 @@ const TanqueSchema = Schema({
     Imagen: {
         type: String,
         default: "default.png"
+    },
+    Descripcion: {
+        type: String,
     }
 
 });
