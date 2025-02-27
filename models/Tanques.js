@@ -2,43 +2,43 @@ const { type } = require('express/lib/response');
 const {Schema, model} = require('mongoose');
 
 const TanqueSchema = Schema({
-    Nombre: {
+    nombre: {
         type: String,
         required: true
     },
-    Marca: {
+    marca: {
         type: String,
         required: true
     },
-    Capacidad: {
+    capacidad: {
         type: String,
         required: true
     },
-    Color: {
+    color: {
         type: String,
         required: true
     },
-    Reforzamiento: {
-        type: Number,
+    reforzamiento: {
+        type: String,
         required: true
     },
-    Precio: {
-        type: Boolean,
+    precio: {
+        type: String,
         required: true
     },
-    PrecioOferta: {
-        type: Boolean,
+    precioOferta: {
+        type: String,
         default: 0
     },
-    Fecha: {
+    fecha: {
         type: Date,
         default: Date.now
     },
-    Imagen: {
+    imagen: {
         type: String,
         default: "default.png"
     },
-    Descripcion: {
+    descripcion: {
         type: String,
     }
 
