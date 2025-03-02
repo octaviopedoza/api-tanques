@@ -42,6 +42,29 @@ const create = async(req, res) => {
     }
 }
 
+const list = async(req, res) => {
+    try {
+        const tanque = await  Tanques.find({});
+        if(!tanque || tanque.length === 0){
+            return res.status(404).json({
+                status: "error",
+                mensaje: "No se encontraron registros de tanques"
+            });
+        }
+        return res.status(200).json({
+            status: "success",
+            tanques: tanque
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: "error",
+            mensaje: "Error en la consulta de la DB",
+            error: error.message
+        });
+    }
+}
+
 module.exports = {
-    create
+    create,
+    list
 };
