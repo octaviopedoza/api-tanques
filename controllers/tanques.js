@@ -44,7 +44,25 @@ const create = async(req, res) => {
 
 const list = async(req, res) => {
     try {
-        const tanque = await  Tanques.find({});
+ /* Filtros por fechas ***************************************************************************************/       
+        //Extraemos los parametros de la fecha desde la consulta
+        const {startDate, endDate} = req.query;
+
+        //Creamos el objeto de filtros para las fechas
+        let filtrosFecha = {};
+
+        //Si se pasa startDate, agregamos la condición para fechas mayores o iguales
+        if(startDate){
+            filtrosFecha.fecha = { $gte: new Date(startDate)}; //Fechas mayores o iguales a startDate
+        }
+        
+        //Si se pasa endDate, agregamos la condicion de fechas menores o iguales
+        if(endDate){
+            filtrosFecha.fecha = filtrosFecha.fecha || {}; //Si ya existe un filtro mantenemos
+            filtrosFecha.fecha.$lte = new Date(endDate); //Fechas menores o iguales a endDate
+        }
+/************************************************************************************************************ */
+        const tanque = await  Tanques.find({}).sort({fecha: -1});
         if(!tanque || tanque.length === 0){
             return res.status(404).json({
                 status: "error",
@@ -64,7 +82,40 @@ const list = async(req, res) => {
     }
 }
 
+/* Sacar un solo articulo ****************************************************************************************/
+const uno = async (req, res) => {
+    // Recoger un id por la URL
+    let id = req.params.id;
+
+    try {
+        // Buscar el artículo
+        const tanque = await Tanques.findById(id);
+
+        // Si no existe, devolverá un error
+        if (!tanque) {
+            return res.status(404).json({
+                status: "error",
+                mensaje: "No se ha encontrado el articulo"
+            });
+        }
+
+        // Devolver resultado exitoso
+        return res.status(200).json({
+            status: "success",
+            tanque: tanque
+        });
+    } catch (error) {
+        // Si ocurre un error, devolver un mensaje de error
+        return res.status(500).json({
+            status: "error",
+            mensaje: "Error al buscar el artículo",
+            error: error.message
+        });
+    }
+}
+
 module.exports = {
     create,
-    list
+    list,
+    uno
 };
