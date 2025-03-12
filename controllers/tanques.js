@@ -2,6 +2,7 @@ const {status} = require('express/lib/response');
 const validator = require('validator');
 const Tanques = require('../models/Tanques');
 const res = require('express/lib/response');
+const { default: mongoose } = require('mongoose');
 
 const create = async(req, res) => {
     let param = req.body;
@@ -114,8 +115,51 @@ const uno = async (req, res) => {
     }
 }
 
+/* Borrar un articulo ********************************************************************************************/
+const borrar = async (req, res) => {
+    let id = req.params.id; //Obtener id desde los parametros de la url
+    if(!mongoose.Types.ObjectId.isValid(id)){
+        return res.status(400).json({
+            status: "error",
+            mensaje: "ID proporcionado es invalido "
+        });
+    }
+
+    try {
+      //Buscar y eliminar el articulo por su id
+        const tanqueEliminado = await Tanques.findByIdAndDelete(id);
+
+      //Verificar si el tanque no fue encontrado
+      if(!tanqueEliminado){
+        return res.status(404).json({
+            status: "error",
+            mensaje: "No se a encontrado el articulo para eliminar"
+        });
+      }
+
+      // Si se encuentra el articulo y elimina el tanque
+      return res.status(200).json({
+        status: "success",
+        mensaje: "articulo eliminado correctamente",
+        tanque: tanqueEliminado
+      });
+
+    } catch (error) {
+    //   //Si ocurre un error, devolvemos un mensaje de error
+        console.log("Error al eliminar articulo: ",error);
+        return res.status(500).json({
+            status: "error",
+            mensaje: "Error al eliminar articulo",
+            error: error.message
+        });
+    }
+}
+/************************************************************************************************************/
+
+
 module.exports = {
     create,
     list,
-    uno
+    uno,
+    borrar
 };
