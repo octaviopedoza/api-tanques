@@ -155,11 +155,64 @@ const borrar = async (req, res) => {
     }
 }
 /************************************************************************************************************/
+const update = async (req, res) => {
+    // Recoger id a editar
+    let id = req.params.id;
 
+    // Recoger datos del body
+    let param = req.body;
+
+    // Validar datos
+    try {
+        let validador_nombre = !validator.isEmpty(param.nombre);
+        let validador_marca = !validator.isEmpty(param.marca);
+        let validador_capacidad = !validator.isEmpty(param.capacidad);
+        let validador_color = !validator.isEmpty(param.color);
+        let validador_reforzamiento = !validator.isEmpty(param.reforzamiento);
+        let validador_precio = !validator.isEmpty(param.precio);
+
+        if (!validador_nombre || !validador_marca || !validador_capacidad || !validador_color || !validador_reforzamiento || !validador_precio) {
+            throw new Error("Información no validada");
+        }
+    } catch (error) {
+        return res.status(400).json({
+            status: "Error",
+            mensaje: "Faltan datos por enviar"
+        });
+    }
+
+    try {
+        // Buscar y actualizar tanque
+        const tanqueActualizado = await Tanques.findOneAndUpdate(
+            { _id: id }, 
+            req.body, 
+            { new: true } // Esto devuelve el documento actualizado
+        );
+
+        if (!tanqueActualizado) {
+            return res.status(500).json({
+                status: "error",
+                mensaje: "Error al actualizar"
+            });
+        }
+
+        return res.status(200).json({
+            status: "success",
+            articulo: tanqueActualizado
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: "error",
+            mensaje: "Error en el servidor",
+            error: error.message
+        });
+    }
+};
 
 module.exports = {
     create,
     list,
     uno,
-    borrar
+    borrar,
+    update
 };
